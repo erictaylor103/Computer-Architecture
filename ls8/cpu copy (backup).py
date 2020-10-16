@@ -109,15 +109,7 @@ class CPU:
         #elif op == "SUB": etc
             self.register[reg_a] += self.register[reg_b]
         
-        elif op == "CMP":
-            if self.register[reg_a] < self.register[reg_b]:
-                self.flag = 0b00000100 # less than flag
-            
-            if self.register[reg_a] > self.register[reg_b]:
-                self.flag = 0b00000010 # greater than flag
-            
-            if self.register[reg_a] == self.register[reg_b]:
-                self.flag = 0b00000001 # equal flag
+
 
         else:
             raise Exception("Unsupported ALU operation")
@@ -161,8 +153,8 @@ class CPU:
             
             elif instruction == PRN:
                 print(self.register[operand_a])
-                print("Instruction: ", instruction)
-                print("PRN: ", PRN)
+                #print("Instruction: ", instruction)
+                #print("PRN: ", PRN)
                 self.pc += 2
             
             elif instruction == LDI:
@@ -221,31 +213,11 @@ class CPU:
                 self.pc +=2
 
             elif instruction == CALL:
-                #Get address of the next instruction after the CALL                
-                return_addr = self.ram_read(self.pc + 2)
-
-                #Push it on the stack
-                self.push_val(return_addr)
-
-                #get subroutine address from register
-                reg_num = self.ram_read(self.pc + 1)
-                subroutine_addr = self.register[reg_num]
-
-                #jump to it
-                self.pc = subroutine_addr
+                pass
                 
             elif instruction == RET:
-                #get return addr from top pf stack
-                return_addr = pop_val()
+                pass
 
-                #store it in the pc
-                pc = return_addr
-
-            elif instruction == CMP: #Compare values of the two registers
-                operand_a = self.ram_read(self.pc + 1)
-                operand_b = self.ram_read(self.pc + 2)
-                self.alu("CMP", operand_a, operand_b)
-                self.pc += 3
 
             else:
                 print(f"unknown instructions {instruction} at address {pc}")
