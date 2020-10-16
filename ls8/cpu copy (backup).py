@@ -2,7 +2,9 @@
 
 import sys
 
-SP      =  7 #Set my stack pointer
+#Set my stack pointer
+SP = 7
+
 LDI     =  0b10000010
 PRN     =  0b01000111
 HLT     =  0b00000001
@@ -10,33 +12,26 @@ MUL     =  0b10100010
 PUSH    =  0b01000101
 POP     =  0b01000110
 CALL    =  0b01010000
-RET     =  0b00010001 # RETURN 
-
-#Extra functionality for Sprint
-CMP = 0b10100111 # ALU OP
-JMP = 0b01010100 # PC MUTATOR
-JEQ = 0b01010101 # PC MUTATOR
-JNE = 0b01010110 # PC MUTATOR
-
+RET     =  0b00010001 # RETURN
+CMP     =  0b10100111 # ALU OP
 
 class CPU:
     """Main CPU class."""
 
     def __init__(self):
         """Construct a new CPU."""
-        self.pc = 0 #Program Counter - address of the instruction we are executing currently
+        self.pc = 0
         #set the max size of ram
         self.ram = [0] * 256
         #create registers
         self.register = [0] * 8
-        self.register[SP] =  0xF4 #this is my stack pointer #244 -> Stack will decrement from here
+        self.register[SP] =  0xF4 #this is my stack pointer #244
         self.flag = 0b00000000
     
     #return the value stored in the address requested
     def ram_read(self, address):
         return self.ram[address]
-
-    #takes in a value to write to ram
+    
     def ram_write(self, value, address):
         self.ram[address] = value
 
@@ -110,17 +105,10 @@ class CPU:
         """ALU operations."""
         
         if op == "ADD":
+            #self.reg[reg_a] += self.reg[reg_b]
+        #elif op == "SUB": etc
             self.register[reg_a] += self.register[reg_b]
         
-        elif op == "CMP":
-            if self.register[reg_a] < self.register[reg_b]:
-                self.flag = 0b00000100 #it is less than flag
-            
-            if self.register[reg_a] > self.register[reg_b]:
-                self.flag = 0b00000010 #it is greater than flag
-            
-            if self.register[reg_a] == self.register[reg_b]:
-                self.flag = 0b00000001 #the flag is equal
 
 
         else:
@@ -202,7 +190,7 @@ class CPU:
                 
 
 
-                #increment program counter to continue to the next operation
+                #increment pc (program counter) to get the program back on track
                 self.pc += 2
             
             elif instruction == POP:
@@ -221,7 +209,7 @@ class CPU:
                 #increment SP (stack pointer)
                 self.register[SP] +=1
 
-                #increment program counter to continue to the next operation
+                #increment program counter to set the program back on track
                 self.pc +=2
 
             elif instruction == CALL:
@@ -230,43 +218,8 @@ class CPU:
             elif instruction == RET:
                 pass
 
-            elif instruction == CMP: #this compares the values for the two registers "operand_a" and "operand_b"
-                operand_a = self.ram_read(self.pc + 1)
-                operand_b = self.ram_read(self.pc + 2)
-                self.alu("CMP", operand_a, operand_b)
-                #increment program counter to continue to the next operation
-                self.pc += 3
 
-
-            #Jump to the address in the register we are given
-            elif instruction == JMP:
-                #get address from register
-                reg_num = self.ram_read(self.pc + 1)
-                #set pc to address
-                self.pc = self.register[reg_num]
-
-            #if the flag is true (0b00000001), then jump to the address in the given register
-            elif instruction == JEQ:
-                if self.flag == 0b00000001:
-                    #get address from register
-                    reg_num = self.ram_read(self.pc + 1)
-                    #set pc to address (this is the address that we will jump to)
-                    self.pc = self.register[reg_num]
-                else:
-                    #else increment pc by two to continue to the next instruction
-                    self.pc += 2
-
-            #if flag is false (not equal), jump to the address in the given register
-            elif instruction == JNE:
-                if self.flag != 0b00000001:
-                    #get address from register
-                    reg_num = self.ram_read(self.pc + 1)
-                    #set pc to address (this is the address that we will jump to)
-                    self.pc = self.register[reg_num]
-                else:
-                    #else increment pc by two to continue to the next instruction
-                    self.pc += 2
             else:
-                print(f"unknown instruction {instruction} at address {self.pc}")
+                print(f"unknown instructions {instruction} at address {pc}")
                 sys.exit(1)
 
