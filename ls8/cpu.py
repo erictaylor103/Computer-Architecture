@@ -237,7 +237,24 @@ class CPU:
                 #increment program counter to continue to the next operation
                 self.pc += 3
 
-            
+
+            #Jump to the address in the register we are given
+            elif instruction == JMP:
+                #get address from register
+                reg_num = self.ram_read(self.pc + 1)
+                #set pc to address
+                self.pc = self.register[reg_num]
+
+            #if the flag is set to true (0b00000001), then jump to the address in the given register
+            elif instruction == JEQ:
+                if self.flag == 0b00000001:
+                    #get address from register
+                    reg_num = self.ram_read(self.pc + 1)
+                    #set pc to address (this is the address that we will jump to)
+                    self.pc = self.register[reg_num]
+                else:
+                    #else increment pc by two to continue to the next instruction
+                    self.pc += 2
 
 
             else:
