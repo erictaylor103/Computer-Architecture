@@ -245,7 +245,7 @@ class CPU:
                 #set pc to address
                 self.pc = self.register[reg_num]
 
-            #if the flag is set to true (0b00000001), then jump to the address in the given register
+            #if the flag is true (0b00000001), then jump to the address in the given register
             elif instruction == JEQ:
                 if self.flag == 0b00000001:
                     #get address from register
@@ -256,7 +256,16 @@ class CPU:
                     #else increment pc by two to continue to the next instruction
                     self.pc += 2
 
-
+            #if flag is false (not equal), jump to the address in the given register
+            elif instruction == JNE:
+                if self.flag != 0b00000001:
+                    #get address from register
+                    reg_num = self.ram_read(self.pc + 1)
+                    #set pc to address (this is the address that we will jump to)
+                    self.pc = self.register[reg_num]
+                else:
+                    #else increment pc by two to continue to the next instruction
+                    self.pc += 2
             else:
                 print(f"unknown instruction {instruction} at address {self.pc}")
                 sys.exit(1)
